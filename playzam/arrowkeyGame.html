@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>Arrow Key Game</title>
+<link rel="stylesheet" type="text/css" href="game.css"> 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+<script src="jquery.color.js"></script>
+</head>
+<body>
+<div class="wrap">
+    <div id="game" class="center-align left">
+        <div id="prompt" class="bold bigger">Loading...</div>
+        <br><h2 class="smaller grey center-align">Possible answers:</h2>
+        <div id="answerNumber0" class="bold answer medium left">Loading...</div> <!--left--> 
+        <div id="answerNumber2" class="bold answer medium">Loading...</div> <!--right--> 
+        <div class="control left"><span class="keyboardKey">&larr;</span> Left arrow</div><div class="control right right-align">Right arrow <span class="keyboardKey">&rarr;</span></div>
+    </div>
+    <div id="sidebar" class="medium center-align">
+        <div id="scoreSection" class="section"><span class="smaller">Score</span><br><span id=score class="bigger"></span><br><span id="scoreChange" class="medium"></span></div>
+        <div id="messages" class="section bold"></div>
+        <div id="playAgain" class="section"><a id="playAgainButton" href="#playAgain">Play Again</a></div>
+    </div>
+</div>
+<br class="clear"><br><br><br><hr><br>
+Edit game data (must be valid JSON):<br>
+<textarea id="data">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"}]</textarea><br>
+<button id="submitData">Submit New Data &rarr;</button>
+
+<script type="text/javascript">
+// JSON data for questions/answers
+var data;
+
+// user's score
+var score;
+
+// how many bonus points to add to score
+var scoreBonus;
+
+// current question and answer
+var curQA;
+
+// correct question and answer index
+var correctQAIdx;
+
+// array of the correct questions and answers
+var correctQAIdxs;
+
+// default background color of answers
+var defaultBg;
+
+// boolean, keep user from answering during background fade
+var alreadyAnswered;
+
+// boolean, whether or not arrow keys for game control are disabled
+var arrowKeysDisabled;
+
+$(document).ready(function(){
+    
+    // get the default background color
+    defaultBg = $(".answer").css("background-color");
+    
+    // check answer on key (up,down,right,left) down
+    $("body").keydown(function(e) {
+        onKey(e.keyCode);
+    });
+    
+    $("#playAgainButton").click(function() {
+        startNewGame();
+        return !1;
+    });
+    
+    // temporarily disable arrow key game functionality to allow editing
+    $("#data").focus(function () {
+        arrowKeysDisabled = true;
+    }).focusout(function () {
+        arrowKeysDisabled = false;
+    });
+    
+    // submit new JSON data for the game
+    $("#submitData").click(function() {
+        parseData();
+        startNewGame();
+        return !1;
+    });
+    
+    // start game
+    parseData();
+    startNewGame();
+});
+
+// initialize (or reset) the game
+function startNewGame(){
+    arrowKeysDisabled = false;
+    
+    //reset score and bonus
+    score = 0;
+    scoreBonus = 0;
+    $("#score").text(score); 
+    
+    // hide the Play Again button
+    $("#playAgain").hide(200);
+    
+    // remove any messages
+    $("#messages").html("");
+    
+    // reset correct answer idxs
+    correctQAIdxs = new Array();
+    
+    showNextQA();
+}
+
+// parse JSON data in textarea
+function parseData() {
+    try {
+        data = jQuery.parseJSON($('#data').val()); 
+    } catch(e) {
+        alert("Invalid JSON");
+    }
+}
+
+/*
+If keyCode represents a control (right or left key) then check answer for
+correctness and change score and animate the answer to indicate correctness.
+*/
+function onKey(keyCode) {
+    if(alreadyAnswered || arrowKeysDisabled || (keyCode != 37 && keyCode != 39)) {
+        // not left or right arrow key codes, so ignore
+        return;
+    }
+    alreadyAnswered = true;
+    
+    // check answer for correctness
+    var answerId = "#answerNumber"+(keyCode-37);
+    // TODO: change to make this work on images using $("#"+id).hasClass("img")
+    
+    // figure out amount to change score by and new background color
+    var scoreChange = 0;
+    var newBg;
+    var isCorrect;
+    if($(answerId).text() == data[correctQAIdx].answer) {
+        // correct
+        scoreChange += 1+scoreBonus;
+        scoreBonus = (scoreBonus+1)* 2;
+        correctQAIdxs.push(correctQAIdx);
+        newBg = "#afa";
+        isCorrect = true;
+    }
+    else {
+        // incorrect
+        scoreChange -= 1;
+        scoreBonus = 0;
+        newBg = "#faa";
+        isCorrect = false;
+    }
+    
+    changeScore(scoreChange);
+    showScoreChange(scoreChange, isCorrect);
+    
+    // momentarily fade the color to indicate right/wrong answer
+    $(answerId).animate({
+        backgroundColor:newBg
+    }, 150, function() {
+        setTimeout("onAnswerIndicatorFinish()", 500);
+    });
+}
+
+//When the correct/incorrect answer indicator finishes animating
+function onAnswerIndicatorFinish() {
+    $(".answer").css("background-color",defaultBg);
+    if(!isWin()) {
+        showNextQA();
+    }
+}
+
+// show the next question-answers
+function showNextQA() {
+    alreadyAnswered = false;
+    
+    // update the prompt with a random prompt
+    correctQAIdx = genRandomNotIn(correctQAIdxs,data.length-1);
+    var curQA = data[correctQAIdx];
+    $("#prompt").text(curQA.prompt);
+
+    var wrongQAIdx = genRandomNotIn([correctQAIdx],data.length-1);
+    var randomizedQAs = shuffle([correctQAIdx, wrongQAIdx]);
+    
+    $("#answerNumber0").text(data[randomizedQAs[0]].answer);
+    $("#answerNumber2").text(data[randomizedQAs[1]].answer);
+}
+
+// show the given message
+function showMessage(messageString) {
+    $("#messages").text(messageString);
+}
+
+// show the change in score above the element with ID aboveId
+function showScoreChange(scoreChange, isCorrect) {
+    var color = "#c00";
+    if(isCorrect) {
+        color = "#0c4";
+        scoreChange = "+"+scoreChange;
+    }
+    $("#scoreChange").fadeIn(500).text(scoreChange).css("color",color).fadeOut(300);
+}
+
+// @return an integer between 0 and @param max, inclusive
+function genRandom(maxInt){
+    return Math.floor(Math.random()*(maxInt+1));
+}
+
+// return int between 0 and maximum not in Array arr 
+function genRandomNotIn(arr, maximum){
+    var rand = genRandom(maximum);
+    while(jQuery.inArray(rand,arr) != -1) {
+        rand = genRandom(maximum);
+    }
+    return rand;
+}
+
+// handle score change
+function changeScore(amount) {
+    var curScore = parseInt($("#score").text());
+    if ((curScore+amount)<0){
+        curScore=0;
+    }
+    else {
+        curScore += amount;
+    }
+    $("#score").text(curScore);
+}
+
+// check if user has won
+function isWin(){
+    if(correctQAIdxs.length >= data.length){
+        $("#messages").text("Game Done");
+        $("#playAgain").show(200);
+        return true;
+    }
+    return false;
+}
+
+/* 
+Function to shuffle an array.
+Author: Jonas Raoni Soares Silva, http://jsfromhell.com/array/shuffle [v1.0]
+*/
+shuffle = function(o){ //v1.0
+    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};
+</script>
+</body>
+</html>
