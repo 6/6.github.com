@@ -8,23 +8,32 @@
 </head>
 <body>
 <div class="wrap">
+    <div id="bonus" class="left center-align">
+        <img id="smile0" src="0.png" class="smile">
+        <!-- preload these other images -->
+        <img id="smile1" src="1.png" class="hidden smile">
+        <img id="smile2" src="2.png" class="hidden smile">
+    </div>
     <div id="game" class="center-align left">
-        <div id="prompt" class="bold bigger">Loading...</div>
+        <div id="prompt" class="bold bigger">Loading...</div><!--prompt-->
         <br><h2 class="smaller grey center-align">Possible answers:</h2>
-        <div id="answerNumber0" class="bold answer medium left">Loading...</div> <!--left--> 
-        <div id="answerNumber2" class="bold answer medium">Loading...</div> <!--right--> 
-        <div class="control left"><span class="keyboardKey">&larr;</span> Left arrow</div><div class="control right right-align">Right arrow <span class="keyboardKey">&rarr;</span></div>
+        <div id="answerNumber0" class="bold answer medium left">Loading...</div><!--left--> 
+        <div id="answerNumber2" class="bold answer medium">Loading...</div><!--right--> 
+        <div class="control left"><span id="leftarrow" class="keyboardKey">&larr;</span> Left arrow</div><div class="control right right-align">Right arrow <span id="rightarrow" class="keyboardKey">&rarr;</span></div>
+        <div class="clear">&nbsp;</div>
+        <div id="statusbar" class="left-align round"><div id="currentstatus" class="round"></div></div>
     </div>
     <div id="sidebar" class="medium center-align">
+         <div id="scoreSection" class="section"><span class="smaller">Time</span><br><span id=timer class="medium"></span><br>
         <div id="scoreSection" class="section"><span class="smaller">Score</span><br><span id=score class="bigger"></span><br><span id="scoreChange" class="medium"></span></div>
         <div id="messages" class="section bold"></div>
-        <div id="playAgain" class="section"><a id="playAgainButton" href="#playAgain">Play Again</a></div>
+        <div id="playAgain" class="hidden section"><a id="playAgainButton" href="#playAgain">Play Again</a></div>
     </div>
 </div>
-<br class="clear"><br><br><br><hr><br>
-Edit game data (must be valid JSON):<br>
-<textarea id="data">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"}]</textarea><br>
-<button id="submitData">Submit New Data &rarr;</button>
+<!--br class="clear"><br><br><br><hr><br>
+Edit game data (must be valid JSON):<br-->
+<textarea id="data" class="hidden">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"}]</textarea><br>
+<!--button id="submitData">Submit New Data &rarr;</button-->
 
 <script type="text/javascript">
 // JSON data for questions/answers
@@ -54,16 +63,37 @@ var alreadyAnswered;
 // boolean, whether or not arrow keys for game control are disabled
 var arrowKeysDisabled;
 
+// boolean, previous answer is correct 
+var previousCorrect;
+
+// boolean, whether or not game timer has started
+var timerStarted;
+
+// seconds used for current game
+var timerSeconds;
+
+// the timer used to tracking seconds
+var timer;
+
+// highscore starts at 0
+var highscore = 0;
+
+// best time starts at inf
+var besttime = Infinity;
+
 $(document).ready(function(){
     
     // get the default background color
     defaultBg = $(".answer").css("background-color");
     
-    // check answer on key (up,down,right,left) down
+    // check answer on key down
     $("body").keydown(function(e) {
         onKey(e.keyCode);
+    }).keyup(function(){
+        $(".keyboardKey").removeClass("pressed");
     });
     
+    // start new game when play again button clicked
     $("#playAgainButton").click(function() {
         startNewGame();
         return !1;
@@ -83,7 +113,7 @@ $(document).ready(function(){
         return !1;
     });
     
-    // start game
+    // start the first game
     parseData();
     startNewGame();
 });
@@ -91,11 +121,15 @@ $(document).ready(function(){
 // initialize (or reset) the game
 function startNewGame(){
     arrowKeysDisabled = false;
+    previousCorrect = false;
+    timerStarted = false;
     
-    //reset score and bonus
+    //reset score, bonus, and timer seconds
     score = 0;
     scoreBonus = 0;
     $("#score").text(score); 
+    timerSeconds = 0;
+    $("#timer").text(timerSeconds);
     
     // hide the Play Again button
     $("#playAgain").hide(200);
@@ -105,6 +139,9 @@ function startNewGame(){
     
     // reset correct answer idxs
     correctQAIdxs = new Array();
+    
+    // reset status bar
+    updateStatusBar();
     
     showNextQA();
 }
@@ -124,14 +161,29 @@ correctness and change score and animate the answer to indicate correctness.
 */
 function onKey(keyCode) {
     if(alreadyAnswered || arrowKeysDisabled || (keyCode != 37 && keyCode != 39)) {
-        // not left or right arrow key codes, so ignore
+        // not left or right arrow key codes or answered or disabled, so ignore
         return;
+    }
+    if(keyCode == 37) {
+        // press left arrow
+        $("#leftarrow").addClass("pressed");
+    }
+    else {
+        // press right arrow
+        $("#rightarrow").addClass("pressed");
+    }
+    // start the timer if it hasn't started yet
+    if(!timerStarted) {
+        timerStarted = true;
+        timer = setInterval("updateTimer()",100);
     }
     alreadyAnswered = true;
     
     // check answer for correctness
     var answerId = "#answerNumber"+(keyCode-37);
-    // TODO: change to make this work on images using $("#"+id).hasClass("img")
+    // TODO: change to make this work on images using $(id).hasClass("img")
+    
+    $(".smile").hide(0);
     
     // figure out amount to change score by and new background color
     var scoreChange = 0;
@@ -143,7 +195,17 @@ function onKey(keyCode) {
         scoreBonus = (scoreBonus+1)* 2;
         correctQAIdxs.push(correctQAIdx);
         newBg = "#afa";
+        if(previousCorrect && genRandom(4) == 4) {
+            // random extra bonus
+            $("#smile2").show(0);
+        }
+        else{
+            // regular smiley face
+            $("#smile1").show(0);
+        }
         isCorrect = true;
+        previousCorrect = true;
+        updateStatusBar();
     }
     else {
         // incorrect
@@ -151,6 +213,9 @@ function onKey(keyCode) {
         scoreBonus = 0;
         newBg = "#faa";
         isCorrect = false;
+        previousCorrect = false;
+        // meh smiley face
+        $("#smile0").show(0);
     }
     
     changeScore(scoreChange);
@@ -227,12 +292,46 @@ function changeScore(amount) {
         curScore += amount;
     }
     $("#score").text(curScore);
+    
+    // update highscore if necessary
+    if(curScore > highscore) {
+        highscore = curScore;
+    }
+}
+
+// update the timer seconds by adding 1/10 second
+function updateTimer() {
+    // round to nearest 10th (precision problem)
+    timerSeconds = Math.round((timerSeconds+0.1)*10)/10;
+    if(timerSeconds == Math.round(timerSeconds)) {
+        // add a '.0'
+        $("#timer").text(timerSeconds+".0");
+    }
+    else {
+        $("#timer").text(timerSeconds);
+    }
+}
+
+// update the game status bar
+function updateStatusBar() {
+    var percentDone = correctQAIdxs.length/data.length;
+    var newWidth = $("#statusbar").width() * percentDone;
+    $("#currentstatus").css("width",newWidth+"px");
 }
 
 // check if user has won
 function isWin(){
     if(correctQAIdxs.length >= data.length){
-        $("#messages").text("Game Done");
+        // stop timer
+        clearInterval(timer);
+        
+        // update best time if necessary
+        if(timerSeconds < besttime) {
+            besttime = timerSeconds;
+        }
+        
+        // show game done and play again
+        $("#messages").html("Game Done<br><span class='smaller'>High score: "+highscore+"</span><br><span class='smaller'>Best time: "+besttime+"</span>");
         $("#playAgain").show(200);
         return true;
     }

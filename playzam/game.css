@@ -1,5 +1,5 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;font:100% arial,helvetica,sans-serif;}
-body{width:800px;margin:30px auto 0}
+body{width:880px;margin:30px auto 0}
 h1{padding:20px 0 0;font-weight:700}
 a{color:#22c;text-decoration:none}
 
@@ -7,10 +7,11 @@ a{color:#22c;text-decoration:none}
 .instruct li{padding:15px 0}
 
 .grey{color:#777}
-.smaller{font-size:22px}
-.medium{font-size:27px}
+.smaller{font-size:20px}
+.medium{font-size:30px}
 .bigger{font-size:45px}
 .bold{font-weight:700}
+.round{border-radius:7px;-moz-border-radius:7px}
 
 .left{float:left}
 .right{float:right}
@@ -18,21 +19,27 @@ a{color:#22c;text-decoration:none}
  * Author: Nathan Smith */
 .clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}
 .center-align{text-align:center;}
+.left-align{text-align:left}
 .right-align{text-align:right}
+.hidden{display:none}
 
 .button{padding:6px 15px;background:#def url('blue.png') repeat-x top left;color:#57b;border:1px solid #ace}
 .button:hover{color:#46a;border-color:#8bd}
 .button:active{background:#cde}
 
-#game{width:560px}
+#bonus{width:80px;margin-top:60px}
+
+#game{width:560px;margin-left:80px;}
     #prompt{padding:44px 0}
     .answer{padding:10px;width:258px;background:#eee;border:1px solid #ccc}  
     #answerNumber2{margin-left:280px}
     .control{padding:20px}
         .keyboardKey{padding:0 2px 2px;font-weight:700;background:#eee;border:3px solid #bbb;border-top:4px solid #ddd}
             .pressed{background:#aaa}
+    #statusbar{margin-top:15px;height:15px;background:#ddd}
+        #currentstatus{width:0;height:15px;background:#67e}
     
-#sidebar{margin-left:560px;padding:10px;width:220px}
-    #playAgain{display:none}
+#sidebar{margin-left:720px;padding:10px;width:220px}
+    #playAgain{}
 
 #data{width:560px;height:100px}
