@@ -54,6 +54,14 @@ $(document).ready(function(){
         return !1;
     });
     
+    // change BG color on hover (overridden when showing right/wrong)
+    // note: pure CSS way seems to be overridden completely
+    $(".answer").hover(function(){
+        $(this).css("background-color","#fff");
+    }, function(){
+        $(this).css("background-color",defaultBg);
+    });
+    
     // start new game when play again button clicked
     $("#playAgainButton").click(function() {
         log("play again click");
@@ -94,8 +102,9 @@ function startNewGame(){
     timerSeconds = 0;
     $("#timer").text(timerSeconds);
     
-    // hide the Play Again button
+    // hide the Play Again button and bonus
     $("#playAgain").hide(200);
+    $("#bonus").hide(0);
     
     // remove any messages
     showMessage("Click an answer to start timer");
@@ -227,6 +236,12 @@ function showMessage(messageString, fade) {
     }
 }
 
+// show a bonus with the given string, operator and amount
+// e.g. showBonus("combo!","+","3")
+function showBonus(string, operator, amount) {
+    $("#bonus").fadeIn(300).delay(500).html(string+"<br><span class='bigger'>"+operator+amount+"</span>").fadeOut(150);
+}
+
 // handle score change
 function changeScore(amount) {
     log("changeScore:"+amount);
@@ -246,7 +261,8 @@ function changeScore(amount) {
     
     // if there's a bonus, show it in the messages
     if(scoreBonus > 0) {
-        showMessage("Combo bonus +"+scoreBonus, true);
+        //showMessage("Combo bonus +"+scoreBonus, true);
+        showBonus("Combo","+",scoreBonus);
     }
     else {
         showMessage("&nbsp;",true);
@@ -271,7 +287,9 @@ function updateStatusBar() {
     log("updateStatusBar");
     var percentDone = correctQAIdxs.length/data.length;
     var newWidth = $("#statusbar").width() * percentDone;
-    $("#currentstatus").css("width",newWidth+"px");
+    $("#currentstatus").animate({
+        width:newWidth+"px"
+    }, 250);
 }
 
 // check if user has won

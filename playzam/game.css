@@ -28,9 +28,8 @@ a{color:#22c;text-decoration:none}
 .button:hover{color:#46a;border-color:#8bd}
 .button:active{background:#cde}
 
-#bonus{margin-top:30px}
-
-#game{width:560px}
+#game{width:560px;position:relative}
+    #bonus{position:absolute;left:0;padding:8px 12px 3px;background:#333;background:rgba(0, 0, 0, 0.6);color:#fff}
     #prompt{padding:44px 0}
     .answer{padding:10px;width:258px;background:#eee;border:1px solid #ccc;cursor:pointer}  
     /*.answer:hover{background:#fafafa}*/
@@ -44,5 +43,6 @@ a{color:#22c;text-decoration:none}
     
 #sidebar{margin-left:560px;padding:10px;width:140px}
     #playAgain{}
+    #smile{margin-top:30px}
 
 #data{width:560px;height:100px}
