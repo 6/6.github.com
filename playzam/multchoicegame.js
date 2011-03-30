@@ -1,41 +1,3 @@
-<!DOCTYPE html>
-<html><head>
-<meta charset="utf-8">
-<title>Arrow Key Game</title>
-<link rel="stylesheet" type="text/css" href="game.css"> 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
-<script src="jquery.color.js"></script>
-</head>
-<body>
-<div class="wrap">
-    <div id="bonus" class="left center-align">
-        <img id="smile0" src="0.png" class="smile">
-        <!-- preload these other images -->
-        <img id="smile1" src="1.png" class="hidden smile">
-        <img id="smile2" src="2.png" class="hidden smile">
-    </div>
-    <div id="game" class="center-align left">
-        <div id="prompt" class="bold bigger">Loading...</div><!--prompt-->
-        <br><h2 class="smaller grey center-align">Possible answers:</h2>
-        <div id="answerNumber0" class="bold answer medium left">Loading...</div><!--left--> 
-        <div id="answerNumber2" class="bold answer medium">Loading...</div><!--right--> 
-        <div class="control left"><span id="leftarrow" class="keyboardKey">&larr;</span> Left arrow</div><div class="control right right-align">Right arrow <span id="rightarrow" class="keyboardKey">&rarr;</span></div>
-        <div class="clear">&nbsp;</div>
-        <div id="statusbar" class="left-align round"><div id="currentstatus" class="round"></div></div>
-    </div>
-    <div id="sidebar" class="medium center-align">
-         <div id="scoreSection" class="section"><span class="smaller">Time</span><br><span id=timer class="medium"></span><br>
-        <div id="scoreSection" class="section"><span class="smaller">Score</span><br><span id=score class="bigger"></span><br><span id="scoreChange" class="medium"></span></div>
-        <div id="messages" class="section bold"></div>
-        <div id="playAgain" class="hidden section"><a id="playAgainButton" href="#playAgain">Play Again</a></div>
-    </div>
-</div>
-<!--br class="clear"><br><br><br><hr><br>
-Edit game data (must be valid JSON):<br-->
-<textarea id="data" class="hidden">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"}]</textarea><br>
-<!--button id="submitData">Submit New Data &rarr;</button-->
-
-<script type="text/javascript">
 // JSON data for questions/answers
 var data;
 
@@ -61,7 +23,7 @@ var defaultBg;
 var alreadyAnswered;
 
 // boolean, whether or not arrow keys for game control are disabled
-var arrowKeysDisabled;
+var controlsDisabled;
 
 // boolean, previous answer is correct 
 var previousCorrect;
@@ -78,32 +40,32 @@ var timer;
 // highscore starts at 0
 var highscore = 0;
 
-// best time starts at inf
+// best time starts at positive infinity
 var besttime = Infinity;
 
 $(document).ready(function(){
-    
+    log("document ready");
     // get the default background color
     defaultBg = $(".answer").css("background-color");
     
-    // check answer on key down
-    $("body").keydown(function(e) {
-        onKey(e.keyCode);
-    }).keyup(function(){
-        $(".keyboardKey").removeClass("pressed");
+    $(".answer").click(function() {
+        log("answer click detected");
+        onClickAnswer("#"+$(this).attr("id"));
+        return !1;
     });
     
     // start new game when play again button clicked
     $("#playAgainButton").click(function() {
+        log("play again click");
         startNewGame();
         return !1;
     });
     
     // temporarily disable arrow key game functionality to allow editing
     $("#data").focus(function () {
-        arrowKeysDisabled = true;
+        controlsDisabled = true;
     }).focusout(function () {
-        arrowKeysDisabled = false;
+        controlsDisabled = false;
     });
     
     // submit new JSON data for the game
@@ -120,7 +82,8 @@ $(document).ready(function(){
 
 // initialize (or reset) the game
 function startNewGame(){
-    arrowKeysDisabled = false;
+    log("startNewGame");
+    controlsDisabled = false;
     previousCorrect = false;
     timerStarted = false;
     
@@ -148,6 +111,7 @@ function startNewGame(){
 
 // parse JSON data in textarea
 function parseData() {
+    log("parseData");
     try {
         data = jQuery.parseJSON($('#data').val()); 
     } catch(e) {
@@ -155,42 +119,32 @@ function parseData() {
     }
 }
 
-/*
-If keyCode represents a control (right or left key) then check answer for
-correctness and change score and animate the answer to indicate correctness.
-*/
-function onKey(keyCode) {
-    if(alreadyAnswered || arrowKeysDisabled || (keyCode != 37 && keyCode != 39)) {
-        // not left or right arrow key codes or answered or disabled, so ignore
-        return;
+function onClickAnswer(answerId) {
+    log("onClickAnswer:"+answerId);
+    if(alreadyAnswered || controlsDisabled) {
+        // answered or controls disabled (end of game), so ignore
+        log("answered:"+alreadyAnswered+" or disabled:"+controlsDisabled);
+        return !1;
     }
-    if(keyCode == 37) {
-        // press left arrow
-        $("#leftarrow").addClass("pressed");
-    }
-    else {
-        // press right arrow
-        $("#rightarrow").addClass("pressed");
-    }
+    
     // start the timer if it hasn't started yet
     if(!timerStarted) {
+        log("starting timer");
         timerStarted = true;
+        // update every tenth of a second
         timer = setInterval("updateTimer()",100);
     }
-    alreadyAnswered = true;
-    
-    // check answer for correctness
-    var answerId = "#answerNumber"+(keyCode-37);
     // TODO: change to make this work on images using $(id).hasClass("img")
     
-    $(".smile").hide(0);
+     $(".smile").hide(0);
     
     // figure out amount to change score by and new background color
     var scoreChange = 0;
-    var newBg;
-    var isCorrect;
+    var newBg, isCorrect;
+    log("answer:"+$(answerId).text()+"\tcorrect:"+data[correctQAIdx].answer);
     if($(answerId).text() == data[correctQAIdx].answer) {
         // correct
+        log("correct");
         scoreChange += 1+scoreBonus;
         scoreBonus = (scoreBonus+1)* 2;
         correctQAIdxs.push(correctQAIdx);
@@ -209,6 +163,7 @@ function onKey(keyCode) {
     }
     else {
         // incorrect
+        log("incorrect");
         scoreChange -= 1;
         scoreBonus = 0;
         newBg = "#faa";
@@ -225,12 +180,14 @@ function onKey(keyCode) {
     $(answerId).animate({
         backgroundColor:newBg
     }, 150, function() {
+        log("wait 500 ms");
         setTimeout("onAnswerIndicatorFinish()", 500);
     });
 }
 
 //When the correct/incorrect answer indicator finishes animating
 function onAnswerIndicatorFinish() {
+    log("onAnswerIndicatorFinish");
     $(".answer").css("background-color",defaultBg);
     if(!isWin()) {
         showNextQA();
@@ -239,6 +196,7 @@ function onAnswerIndicatorFinish() {
 
 // show the next question-answers
 function showNextQA() {
+    log("showNextQA");
     alreadyAnswered = false;
     
     // update the prompt with a random prompt
@@ -249,17 +207,20 @@ function showNextQA() {
     var wrongQAIdx = genRandomNotIn([correctQAIdx],data.length-1);
     var randomizedQAs = shuffle([correctQAIdx, wrongQAIdx]);
     
+    // TODO: more generic N number of questions
     $("#answerNumber0").text(data[randomizedQAs[0]].answer);
-    $("#answerNumber2").text(data[randomizedQAs[1]].answer);
+    $("#answerNumber1").text(data[randomizedQAs[1]].answer);
 }
 
 // show the given message
 function showMessage(messageString) {
+    log("showMessage:"+messageString);
     $("#messages").text(messageString);
 }
 
 // show the change in score above the element with ID aboveId
 function showScoreChange(scoreChange, isCorrect) {
+    log("showScoreChange:"+scoreChange+","+isCorrect);
     var color = "#c00";
     if(isCorrect) {
         color = "#0c4";
@@ -268,22 +229,9 @@ function showScoreChange(scoreChange, isCorrect) {
     $("#scoreChange").fadeIn(500).text(scoreChange).css("color",color).fadeOut(300);
 }
 
-// @return an integer between 0 and @param max, inclusive
-function genRandom(maxInt){
-    return Math.floor(Math.random()*(maxInt+1));
-}
-
-// return int between 0 and maximum not in Array arr 
-function genRandomNotIn(arr, maximum){
-    var rand = genRandom(maximum);
-    while(jQuery.inArray(rand,arr) != -1) {
-        rand = genRandom(maximum);
-    }
-    return rand;
-}
-
 // handle score change
 function changeScore(amount) {
+    log("changeScore:"+amount);
     var curScore = parseInt($("#score").text());
     if ((curScore+amount)<0){
         curScore=0;
@@ -314,6 +262,7 @@ function updateTimer() {
 
 // update the game status bar
 function updateStatusBar() {
+    log("updateStatusBar");
     var percentDone = correctQAIdxs.length/data.length;
     var newWidth = $("#statusbar").width() * percentDone;
     $("#currentstatus").css("width",newWidth+"px");
@@ -321,7 +270,9 @@ function updateStatusBar() {
 
 // check if user has won
 function isWin(){
+    log("isWin");
     if(correctQAIdxs.length >= data.length){
+        log("DONE");
         // stop timer
         clearInterval(timer);
         
@@ -337,15 +288,3 @@ function isWin(){
     }
     return false;
 }
-
-/* 
-Function to shuffle an array.
-Author: Jonas Raoni Soares Silva, http://jsfromhell.com/array/shuffle [v1.0]
-*/
-shuffle = function(o){ //v1.0
-    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-    return o;
-};
-</script>
-</body>
-</html>

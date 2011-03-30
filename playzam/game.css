@@ -31,8 +31,8 @@ a{color:#22c;text-decoration:none}
 
 #game{width:560px;margin-left:80px;}
     #prompt{padding:44px 0}
-    .answer{padding:10px;width:258px;background:#eee;border:1px solid #ccc}  
-    #answerNumber2{margin-left:280px}
+    .answer{padding:10px;width:258px;background:#eee;border:1px solid #ccc;cursor:pointer}  
+    #answerNumber1{margin-left:280px}/*TODO more generic */
     .control{padding:20px}
         .keyboardKey{padding:0 2px 2px;font-weight:700;background:#eee;border:3px solid #bbb;border-top:4px solid #ddd}
             .pressed{background:#aaa}
