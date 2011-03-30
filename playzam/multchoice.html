@@ -10,12 +10,6 @@
 </head>
 <body>
 <div class="wrap">
-    <div id="bonus" class="left center-align">
-        <img id="smile0" src="0.png" class="smile">
-        <!-- preload these other images -->
-        <img id="smile1" src="1.png" class="hidden smile">
-        <img id="smile2" src="2.png" class="hidden smile">
-    </div>
     <div id="game" class="center-align left">
         <div id="prompt" class="bold bigger">Loading...</div><!--prompt-->
         <br><h2 class="smaller grey center-align">Possible answers:</h2>
@@ -23,18 +17,23 @@
         <div id="answerNumber1" class="bold answer medium">Loading...</div><!--right--> 
         <!--div class="control left"><span id="leftarrow" class="keyboardKey">&larr;</span> Left arrow</div><div class="control right right-align">Right arrow <span id="rightarrow" class="keyboardKey">&rarr;</span></div>
         --><div class="clear">&nbsp;</div>
+        <div id="messages" class="section center-align"><span id="messagetext" class="smallest bold italic uppercase"></span></div>
         <div id="statusbar" class="left-align round"><div id="currentstatus" class="round"></div></div>
     </div>
     <div id="sidebar" class="medium center-align">
          <div id="scoreSection" class="section"><span class="smaller">Time</span><br><span id=timer class="medium"></span><br>
         <div id="scoreSection" class="section"><span class="smaller">Score</span><br><span id=score class="bigger"></span><br><span id="scoreChange" class="medium"></span></div>
-        <div id="messages" class="section bold"></div>
         <div id="playAgain" class="hidden section"><a id="playAgainButton" href="#playAgain">Play Again</a></div>
+        <div id="bonus">
+            <img id="smile0" src="0.png" class="smile">
+            <img id="smile1" src="1.png" class="hidden smile">
+            <img id="smile2" src="2.png" class="hidden smile">
+        </div>
     </div>
 </div>
 <!--br class="clear"><br><br><br><hr><br>
 Edit game data (must be valid JSON):<br-->
-<textarea id="data" class="hidden">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"}]</textarea><br>
+<textarea id="data" class="hidden">[{"type":"text","prompt":"amarillo","answer":"yellow"},{"type":"text","prompt":"gris","answer":"grey"},{"type":"text","prompt":"anaranjado","answer":"orange"},{"type":"text","prompt":"dorado","answer":"golden"},{"type":"text","prompt":"blanco","answer":"white"},{"type":"text","prompt":"azul","answer":"blue"},{"type":"text","prompt":"turquesa","answer":"turqoise"},{"type":"text","prompt":"plateado","answer":"silver"},{"type":"text","prompt":"marrón","answer":"brown"},{"type":"text","prompt":"verde","answer":"green"},{"type":"text","prompt":"rojo","answer":"red"}]</textarea><br>
 <!--button id="submitData">Submit New Data &rarr;</button-->
 
 

@@ -98,7 +98,7 @@ function startNewGame(){
     $("#playAgain").hide(200);
     
     // remove any messages
-    $("#messages").html("");
+    showMessage("Click an answer to start timer");
     
     // reset correct answer idxs
     correctQAIdxs = new Array();
@@ -146,7 +146,6 @@ function onClickAnswer(answerId) {
         // correct
         log("correct");
         scoreChange += 1+scoreBonus;
-        scoreBonus = (scoreBonus+1)* 2;
         correctQAIdxs.push(correctQAIdx);
         newBg = "#afa";
         if(previousCorrect && genRandom(4) == 4) {
@@ -174,7 +173,10 @@ function onClickAnswer(answerId) {
     }
     
     changeScore(scoreChange);
-    showScoreChange(scoreChange, isCorrect);
+    if(isCorrect){
+        scoreBonus = (scoreBonus+1)* 2;
+    }
+    
     
     // momentarily fade the color to indicate right/wrong answer
     $(answerId).animate({
@@ -213,20 +215,16 @@ function showNextQA() {
 }
 
 // show the given message
-function showMessage(messageString) {
+function showMessage(messageString, fade) {
     log("showMessage:"+messageString);
-    $("#messages").text(messageString);
-}
-
-// show the change in score above the element with ID aboveId
-function showScoreChange(scoreChange, isCorrect) {
-    log("showScoreChange:"+scoreChange+","+isCorrect);
-    var color = "#c00";
-    if(isCorrect) {
-        color = "#0c4";
-        scoreChange = "+"+scoreChange;
+    if(fade){
+        // fade in and out
+        $("#messagetext").hide(0);
+        $("#messagetext").fadeIn(500).html(messageString);
     }
-    $("#scoreChange").fadeIn(500).text(scoreChange).css("color",color).fadeOut(300);
+    else {
+        $("#messagetext").html(messageString);
+    }
 }
 
 // handle score change
@@ -244,6 +242,14 @@ function changeScore(amount) {
     // update highscore if necessary
     if(curScore > highscore) {
         highscore = curScore;
+    }
+    
+    // if there's a bonus, show it in the messages
+    if(scoreBonus > 0) {
+        showMessage("Combo bonus +"+scoreBonus, true);
+    }
+    else {
+        showMessage("&nbsp;",true);
     }
 }
 
@@ -282,7 +288,7 @@ function isWin(){
         }
         
         // show game done and play again
-        $("#messages").html("Game Done<br><span class='smaller'>High score: "+highscore+"</span><br><span class='smaller'>Best time: "+besttime+"</span>");
+        showMessage("Game Done | High score: "+highscore+" |  Best time: "+besttime);
         $("#playAgain").show(200);
         return true;
     }
