@@ -54,14 +54,6 @@ $(document).ready(function(){
         return !1;
     });
     
-    // change BG color on hover (overridden when showing right/wrong)
-    // note: pure CSS way seems to be overridden completely
-    $(".answer").hover(function(){
-        $(this).css("background-color","#fff");
-    }, function(){
-        $(this).css("background-color",defaultBg);
-    });
-    
     // start new game when play again button clicked
     $("#playAgainButton").click(function() {
         log("play again click");
@@ -142,6 +134,8 @@ function onClickAnswer(answerId) {
         timerStarted = true;
         // update every tenth of a second
         timer = setInterval("updateTimer()",100);
+        
+        hideMessage();
     }
     // TODO: change to make this work on images using $(id).hasClass("img")
     
@@ -224,16 +218,14 @@ function showNextQA() {
 }
 
 // show the given message
-function showMessage(messageString, fade) {
+function showMessage(messageString) {
     log("showMessage:"+messageString);
-    if(fade){
-        // fade in and out
-        $("#messagetext").hide(0);
-        $("#messagetext").fadeIn(500).html(messageString);
-    }
-    else {
-        $("#messagetext").html(messageString);
-    }
+    $("#messagetext").html(messageString);
+    $("#messages").slideDown(300);
+}
+
+function hideMessage(){
+    $("#messages").slideUp(300);
 }
 
 // show a bonus with the given string, operator and amount
@@ -261,11 +253,7 @@ function changeScore(amount) {
     
     // if there's a bonus, show it in the messages
     if(scoreBonus > 0) {
-        //showMessage("Combo bonus +"+scoreBonus, true);
         showBonus("Combo","+",scoreBonus);
-    }
-    else {
-        showMessage("&nbsp;",true);
     }
 }
 
@@ -289,7 +277,7 @@ function updateStatusBar() {
     var newWidth = $("#statusbar").width() * percentDone;
     $("#currentstatus").animate({
         width:newWidth+"px"
-    }, 250);
+    }, 300);
 }
 
 // check if user has won

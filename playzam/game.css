@@ -31,13 +31,14 @@ a{color:#22c;text-decoration:none}
 #game{width:560px;position:relative}
     #bonus{position:absolute;left:0;padding:8px 12px 3px;background:#333;background:rgba(0, 0, 0, 0.6);color:#fff}
     #prompt{padding:44px 0}
-    .answer{padding:10px;width:258px;background:#eee;border:1px solid #ccc;cursor:pointer}  
+    .answer{padding:10px;width:258px;color:#666;background:#eee;border:1px solid #ccc;cursor:pointer}  
+    .answer:hover{color:#000}
     /*.answer:hover{background:#fafafa}*/
     #answerNumber1{margin-left:280px}/*TODO more generic */
     .control{padding:20px}
         .keyboardKey{padding:0 2px 2px;font-weight:700;background:#eee;border:3px solid #bbb;border-top:4px solid #ddd}
             .pressed{background:#aaa}
-    #statusbar{margin-top:15px;height:15px;background:#ddd}
+    #statusbar{margin-top:20px;height:15px;background:#ddd}
         #currentstatus{width:0;height:15px;background:#67e}
     #messages{padding:10px 0;background:#aaa url('bg-dgrey.png') repeat-x top left;color:#fff;border:1px solid #888}
     
