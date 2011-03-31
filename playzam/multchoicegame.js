@@ -51,6 +51,7 @@ $(document).ready(function(){
     $(".answer").click(function() {
         log("answer click detected");
         onClickAnswer("#"+$(this).attr("id"));
+        controlsDisabled = true;
         return !1;
     });
     
@@ -195,6 +196,7 @@ function onAnswerIndicatorFinish() {
     log("onAnswerIndicatorFinish");
     $(".answer").css("background-color",defaultBg);
     if(!isWin()) {
+        controlsDisabled = false;
         showNextQA();
     }
 }
@@ -287,9 +289,6 @@ function isWin(){
         log("DONE");
         // stop timer
         clearInterval(timer);
-        
-        // disable all controls
-        controlsDisabled = true;
         
         // update best time if necessary
         if(timerSeconds < besttime) {
