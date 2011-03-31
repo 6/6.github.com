@@ -288,6 +288,9 @@ function isWin(){
         // stop timer
         clearInterval(timer);
         
+        // disable all controls
+        controlsDisabled = true;
+        
         // update best time if necessary
         if(timerSeconds < besttime) {
             besttime = timerSeconds;
