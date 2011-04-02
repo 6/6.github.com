@@ -36,6 +36,7 @@ function setSortableWidth(numColumns) {
     $("#sortable").css("width",width+"px");
 }
 
+// update size of grid
 function changeSize() {
     var cols = parseInt($("#cols").val());
     var rows = parseInt($("#rows").val());
@@ -44,5 +45,6 @@ function changeSize() {
     for(var i=0;i<(rows*cols);i++) {
         $("#sortable").append('<li class="ui-state-default">'+(i+1)+'</li>');
     }
+    //TODO: AJAX
     return !1;
 }

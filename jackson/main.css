@@ -49,6 +49,8 @@ img{border:0}
 
 /* BOXES-SPECIFIC */
 #box-section{border-width:5px 0;position:relative}
+#change-size{padding-bottom:10px}
+    #rows,#cols{width:30px}
 #sortable {list-style-type: none; margin: 0; padding: 0;margin-right:200px }
     #sortable li { margin:5px; padding: 5px; float: left; width:70px; height:70px;font-size:18px;cursor:pointer;border:1px solid #ccc;background:#fea }
-#controls{width:200px;margin-top:50px;position:absolute;top:0;right:20px}
+#controls{width:200px;margin-top:80px;position:absolute;top:0;right:20px}
