@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TODO: INSERT USER LIST TITLE</title>
+    <link rel="stylesheet" type="text/css" href="cssreset.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script type="text/javascript" src="jquery-1.5.1.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+<body class="center-align">
+    <div id="header" class="wrap left-align">
+        <div id="breadcrumbs" class="float-left"><!-- nothing here yet --></div>
+        <div id="right-links" class="float-right">
+            <span>Logged in as [insert email]</span>
+            <span><a href="/logout">Logout</a></span>
+        </div>
+    </div>
+    <div class="clear">&nbsp;</div>
+    <div id="main-section" class="wrap-small center-margin bg-white border-blue round">
+        <h1>Your lists</h1>
+        <ul id="lists" class="left-align">
+            <li><b><a href="#list">List 1</a></b> <a href="#remove">Remove</a></li>
+            <li><b><a href="#list">List 2</a></b> <a href="#remove">Remove</a></li>
+            <li><b><a href="#list">List 3 title</a></b> <a href="#remove">Remove</a></li>
+        </ul>
+        <form action="nojs">
+        <input id="list-name" type="text"><input id="add-new-list" type="submit" value="+ Add a new list">
+        </form>
+    </div>
+</body>
+</html>

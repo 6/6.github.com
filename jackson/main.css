@@ -1,0 +1,49 @@
+/* CSS RESET - some good defaults */
+html{font:100% arial,helvetica,sans-serif;color:#222;background:#ddfaff}
+a{text-decoration:none;color:#05c;}a:hover{text-decoration:underline}
+img{border:0}
+
+/* ALIGNMENT AND FLOATING */
+.clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}
+.float-left{float:left}.float-right{float:right}
+.left-align{text-align:left}.center-align{text-align:center}.right-align{text-align:right}
+.center-margin,.wrap{margin:0 auto}
+
+/* SHAPES */
+.round{border-radius:15px 15px 15px 15px;-moz-border-radius:15px;-webkit-border-radius:15px;}
+
+/* SIZES */
+.wrap-medium{width:700px}.wrap-small{width:380px}
+.full-width{width:100%}
+
+/* FORMS */
+.button{padding:5px 7px}
+
+/* COLORS AND MISC FORMATTING */
+.bold{font-weight:bold}
+.error{margin:15px;padding:5px;font-size:14px;border:1px solid #ebb;color:#544;background:#fdd}
+.bg-white{background:#fff}
+.border-blue{border:7px solid #9bd}
+
+#header{padding:20px 0;color:#57a}
+    #logo{font-size:28px}
+    #pitch{font-size:20px;color:#68b}
+
+#big-form{width:380px;padding-bottom:20px}
+    #big-form fieldset{width:250px;margin-top:40px;margin-bottom:20px}
+    #big-form input{margin-bottom:10px}
+    
+/* ONCE LOGGED IN */
+#breadcrumbs,#right-links{font-size:15px}
+#breadcrumbs{}
+#right-links{color:#555;padding-right:15px}
+    #right-links span{padding:0 10px}
+
+#main-section{margin-top:15px;padding:15px}
+    #main-section h1{font-size:25px;}
+    
+/* LISTS PAGE-SPECIFIC */
+#lists{margin:10px 0;font-size:18px}
+    #lists li{padding:5px 0}
+        #lists li b{padding-right:10px}
+
