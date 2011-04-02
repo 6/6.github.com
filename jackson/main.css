@@ -23,7 +23,7 @@ img{border:0}
 .bold{font-weight:bold}
 .error{margin:15px;padding:5px;font-size:14px;border:1px solid #ebb;color:#544;background:#fdd}
 .bg-white{background:#fff}
-.border-blue{border:7px solid #9bd}
+.border-blue{border:7px solid #ace}
 
 #header{padding:20px 0;color:#57a}
     #logo{font-size:28px}
@@ -35,15 +35,20 @@ img{border:0}
     
 /* ONCE LOGGED IN */
 #breadcrumbs,#right-links{font-size:15px}
-#breadcrumbs{}
+#breadcrumbs{padding-left:25px}
 #right-links{color:#555;padding-right:15px}
     #right-links span{padding:0 10px}
 
-#main-section{margin-top:15px;padding:15px}
-    #main-section h1{font-size:25px;}
+#main-section,#box-section{margin-top:15px;padding:15px}
+    #main-section h1,#box-section h1{font-size:25px;margin-bottom:10px}
     
 /* LISTS PAGE-SPECIFIC */
 #lists{margin:10px 0;font-size:18px}
     #lists li{padding:5px 0}
         #lists li b{padding-right:10px}
 
+/* BOXES-SPECIFIC */
+#box-section{border-width:5px 0;position:relative}
+#sortable {list-style-type: none; margin: 0; padding: 0;margin-right:200px }
+    #sortable li { margin:5px; padding: 5px; float: left; width:70px; height:70px;font-size:18px;cursor:pointer;border:1px solid #ccc;background:#fea }
+#controls{width:200px;margin-top:50px;position:absolute;top:0;right:20px}
