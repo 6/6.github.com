@@ -1,0 +1,26 @@
+<!doctype html><title>icon</title><meta charset="utf-8">
+<script src="raphael-min.js"></script>
+<style>*{margin:0;padding:0;}body{background:#eee;}
+  #container{background:#3C63C1;width:80px;}</style>
+<body><div id=container></div>
+<script>
+window.onload = function () {
+  var paper = Raphael("container", 80, 80)
+  , x = 20
+  , y = 20
+  , border_radius = 3
+  , width = 40
+  , height = 40
+  , stroke_color = "#fff"
+
+  var icon = paper.rect(x, y, width, height, border_radius);
+  icon.attr({
+    stroke: stroke_color
+    , "stroke-width": 2
+    , "stroke-linecap": "round"
+    , "stroke-linejoin": "round"
+    , fill: "#ccc"
+    , "fill-opacity": .5
+  });
+}
+</script>
